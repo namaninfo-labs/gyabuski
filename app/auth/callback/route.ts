@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { generateAnonId } from '@/lib/generateId'
+
+function generateAnonId(): string {
+  const prefixes = ['VOID', 'M', 'VX', 'NX', 'ECHO', 'DRIFT']
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
+  const num = Math.floor(Math.random() * 900) + 100
+  const suffix = Math.random().toString(36).substring(2, 4).toUpperCase()
+  return `${prefix}-${num}${suffix}`
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -12,22 +19,31 @@ export async function GET(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const { data: { session } } = await supabase.auth.exchangeCodeForSession(code)
+    const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code)
 
-    if (session?.user) {
-      // Check if profile exists
+    if (!error && session?.user) {
+      // Profile already hai ya nahi check karo
       const { data: existing } = await supabase
-        .from('profiles').select('id').eq('id', session.user.id).single()
+        .from('profiles')
+        .select('id')
+        .eq('id', session.user.id)
+        .single()
 
-      // Create profile if first time
+      // Nahi hai toh create karo
       if (!existing) {
-        await supabase.from('profiles').insert([{
-          id: session.user.id,
-          anon_id: generateAnonId()
-        }])
+        await supabase
+          .from('profiles')
+          .insert([{
+            id: session.user.id,
+            anon_id: generateAnonId(),
+          }])
       }
+
+      // Home pe bhejo
+      return NextResponse.redirect(`${origin}/home`)
     }
   }
 
-  return NextResponse.redirect(`${origin}/feed`)
+  // Kuch galat hua toh landing pe bhejo
+  return NextResponse.redirect(`${origin}/`)
 }

@@ -28,11 +28,11 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: '#050510' }}>
 
-      {/* BACKGROUND SYSTEM */}
+      {/* BACKGROUND */}
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'url(/backgrounds/bg1.jpeg)',
+          backgroundImage: 'url(/backgrounds/background.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center center'
         }}
@@ -93,7 +93,7 @@ export default function LoginPage() {
             anonymous emotional archive
           </p>
 
-          {/* DECORATIVE DIVIDER */}
+          {/* DIVIDER */}
           <div className="flex items-center justify-center" style={{ marginBottom: '42px' }}>
             <div className="h-px w-20" style={{ background: 'linear-gradient(to right, transparent, #7C3AED)' }} />
             <div
@@ -127,7 +127,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT SIDE — FORM */}
         <div className="flex items-center justify-center px-6 pb-16 lg:pr-20 lg:pb-0">
           <div
             className="w-full"
@@ -142,7 +142,6 @@ export default function LoginPage() {
               padding: '40px'
             }}
           >
-            {/* CARD TITLE */}
             <h2
               style={{
                 fontFamily: 'Inter, sans-serif',
@@ -155,7 +154,6 @@ export default function LoginPage() {
               Welcome back
             </h2>
 
-            {/* CARD SUBTITLE */}
             <p
               style={{
                 fontFamily: 'Inter, sans-serif',
@@ -168,7 +166,7 @@ export default function LoginPage() {
               Sign in to continue your journey
             </p>
 
-            {/* EMAIL INPUT */}
+            {/* EMAIL */}
             <div className="relative">
               <Mail
                 size={18}
@@ -195,7 +193,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* PASSWORD INPUT */}
+            {/* PASSWORD */}
             <div className="relative" style={{ marginTop: '14px' }}>
               <Lock
                 size={18}
@@ -301,11 +299,7 @@ export default function LoginPage() {
               }}
             >
               Don&apos;t have an account?{' '}
-              <Link
-                href="/register"
-                className="hover:underline"
-                style={{ color: '#A78BFA' }}
-              >
+              <Link href="/register" className="hover:underline" style={{ color: '#A78BFA' }}>
                 Sign up
               </Link>
             </p>
@@ -321,14 +315,7 @@ export default function LoginPage() {
                 borderRadius: '12px'
               }}
             >
-              <p
-                style={{
-                  fontFamily: 'Inter',
-                  fontSize: '12px',
-                  color: 'rgba(255,255,255,0.35)',
-                  lineHeight: 1.6
-                }}
-              >
+              <p style={{ fontFamily: 'Inter', fontSize: '12px', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6 }}>
                 Login is only to remember your space.<br />
                 Your identity stays hidden from everyone.
               </p>
@@ -336,7 +323,6 @@ export default function LoginPage() {
 
           </div>
         </div>
-
       </div>
     </div>
   )
