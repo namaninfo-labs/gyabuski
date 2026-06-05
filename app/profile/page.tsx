@@ -12,6 +12,7 @@ import {
   Eye,
   MoreHorizontal,
   Quote,
+  CheckCircle,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -71,7 +72,6 @@ export default function ProfilePage() {
 
         if (profileError) {
           console.error('Profile error:', profileError.message);
-          // Agar profile nahi mili to bana do
           if (profileError.code === 'PGRST116') {
             const newAnonId = 'VOID-' + Math.floor(Math.random() * 900 + 100) + 'XK'
             const { data: newProfile } = await supabase
@@ -256,10 +256,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-[#0D0D14] flex flex-col items-center justify-center gap-4">
         <p className="text-[#94A3B8] text-sm">Could not load your profile.</p>
-        <button
-          onClick={() => router.push('/')}
-          className="text-[#7C3AED] text-sm hover:underline"
-        >
+        <button onClick={() => router.push('/')} className="text-[#7C3AED] text-sm hover:underline">
           Go back home
         </button>
       </div>
@@ -269,7 +266,6 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-[#0D0D14] relative">
 
-      {/* Background — FIXED path */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: 'url(/backgrounds/background.jpeg)', opacity: 0.15 }}
@@ -311,7 +307,6 @@ export default function ProfilePage() {
             {/* USER HEADER */}
             <div className="flex flex-col lg:flex-row gap-8 mb-10">
 
-              {/* Left: Avatar + Info */}
               <div className="flex items-start gap-6 flex-1">
                 <div
                   className="w-24 h-24 rounded-full flex items-center justify-center flex-shrink-0"
@@ -324,20 +319,28 @@ export default function ProfilePage() {
                   <h1 className="text-white text-2xl font-bold">{profile.anon_id}</h1>
                   <p className="text-[#7C3AED] text-[13px]">{formatMemberSince(profile.created_at)}</p>
 
-                  {/* Bio — editable */}
+                  {/* Bio — editable with save button */}
                   <div className="mt-1">
                     {isEditingBio ? (
                       <>
-                        <textarea
-                          ref={bioRef}
-                          value={bioInput}
-                          onChange={e => setBioInput(e.target.value)}
-                          onBlur={saveBio}
-                          onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveBio(); } }}
-                          className="w-full bg-[#1a1a2e] border border-[#2D2D42] rounded-lg px-3 py-2 text-[#E2E8F0] text-sm resize-none focus:outline-none focus:border-[#7C3AED] transition-colors"
-                          rows={2}
-                          placeholder="Write something about yourself..."
-                        />
+                        <div className="flex gap-2">
+                          <textarea
+                            ref={bioRef}
+                            value={bioInput}
+                            onChange={e => setBioInput(e.target.value)}
+                            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveBio(); } }}
+                            className="flex-1 bg-[#1a1a2e] border border-[#2D2D42] rounded-lg px-3 py-2 text-[#E2E8F0] text-sm resize-none focus:outline-none focus:border-[#7C3AED] transition-colors"
+                            rows={2}
+                            placeholder="Write something about yourself..."
+                          />
+                          <button
+                            onClick={saveBio}
+                            className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center self-start mt-0.5"
+                            style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)', color: '#C4B5FD' }}
+                          >
+                            <CheckCircle size={18} />
+                          </button>
+                        </div>
                         <p className="text-[#475569] text-xs mt-1">
                           {bioInput.trim().split(/\s+/).filter(w => w.length > 0).length}/60 words
                         </p>
@@ -348,30 +351,36 @@ export default function ProfilePage() {
                         className="text-[#E2E8F0] text-sm cursor-text hover:text-white transition-colors"
                         title="Click to edit bio"
                       >
-                        {profile.bio || (
-                          <span className="text-[#475569] italic">Click to add a bio...</span>
-                        )}
+                        {profile.bio || <span className="text-[#475569] italic">Click to add a bio...</span>}
                       </p>
                     )}
                   </div>
 
-                  {/* Tagline — editable */}
+                  {/* Tagline — editable with save button */}
                   <div className="flex items-start gap-2 mt-1">
                     <Quote size={14} color="#7C3AED" className="mt-1 flex-shrink-0" />
                     <div className="flex-1">
                       {isEditingTagline ? (
                         <>
-                          <input
-                            ref={taglineRef}
-                            type="text"
-                            value={taglineInput}
-                            onChange={e => setTaglineInput(e.target.value)}
-                            onBlur={saveTagline}
-                            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); saveTagline(); } }}
-                            className="w-full bg-[#1a1a2e] border border-[#2D2D42] rounded-lg px-3 py-1.5 text-[#94A3B8] text-[13px] italic focus:outline-none focus:border-[#7C3AED] transition-colors"
-                            maxLength={100}
-                            placeholder="Add a tagline..."
-                          />
+                          <div className="flex gap-2">
+                            <input
+                              ref={taglineRef}
+                              type="text"
+                              value={taglineInput}
+                              onChange={e => setTaglineInput(e.target.value)}
+                              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); saveTagline(); } }}
+                              className="flex-1 bg-[#1a1a2e] border border-[#2D2D42] rounded-lg px-3 py-1.5 text-[#94A3B8] text-[13px] italic focus:outline-none focus:border-[#7C3AED] transition-colors"
+                              maxLength={100}
+                              placeholder="Add a tagline..."
+                            />
+                            <button
+                              onClick={saveTagline}
+                              className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                              style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)', color: '#C4B5FD' }}
+                            >
+                              <CheckCircle size={16} />
+                            </button>
+                          </div>
                           <p className="text-[#475569] text-xs mt-1">{taglineInput.length}/100</p>
                         </>
                       ) : (
@@ -380,9 +389,7 @@ export default function ProfilePage() {
                           className="text-[#94A3B8] text-[13px] italic cursor-text hover:text-[#C4B5FD] transition-colors"
                           title="Click to edit tagline"
                         >
-                          {profile.tagline || (
-                            <span className="text-[#475569]">Click to add a tagline...</span>
-                          )}
+                          {profile.tagline || <span className="text-[#475569]">Click to add a tagline...</span>}
                         </p>
                       )}
                     </div>
@@ -390,7 +397,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Right: Stats */}
+              {/* Stats */}
               <div className="flex gap-4 flex-shrink-0">
                 {[
                   { icon: BookOpen, count: stats.stories, label: 'Stories' },
@@ -429,22 +436,10 @@ export default function ProfilePage() {
 
             {/* TAB CONTENT */}
             <div className="min-h-[300px]">
-              {activeTab === 'stories' && renderStoryList(
-                myStories, 'No whispers yet.', 'Your thoughts are waiting to be written.',
-                <FileText size={32} color="#2D2D42" />
-              )}
-              {activeTab === 'liked' && renderStoryList(
-                likedStories, 'Nothing resonated yet.', 'Read the feed and react to stories.',
-                <Heart size={32} color="#2D2D42" />
-              )}
-              {activeTab === 'bookmarks' && renderStoryList(
-                bookmarkedStories, 'Nothing saved yet.', 'Bookmark stories that move you.',
-                <Bookmark size={32} color="#2D2D42" />
-              )}
-              {activeTab === 'drafts' && renderStoryList(
-                drafts, 'No drafts yet.', 'Start writing and save as draft.',
-                <FileText size={32} color="#2D2D42" />, true
-              )}
+              {activeTab === 'stories' && renderStoryList(myStories, 'No whispers yet.', 'Your thoughts are waiting to be written.', <FileText size={32} color="#2D2D42" />)}
+              {activeTab === 'liked' && renderStoryList(likedStories, 'Nothing resonated yet.', 'Read the feed and react to stories.', <Heart size={32} color="#2D2D42" />)}
+              {activeTab === 'bookmarks' && renderStoryList(bookmarkedStories, 'Nothing saved yet.', 'Bookmark stories that move you.', <Bookmark size={32} color="#2D2D42" />)}
+              {activeTab === 'drafts' && renderStoryList(drafts, 'No drafts yet.', 'Start writing and save as draft.', <FileText size={32} color="#2D2D42" />, true)}
             </div>
 
             {/* FOOTER */}

@@ -34,30 +34,21 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
 
-    const { data, error: e } = await supabase.auth.signUp({
+    const { error: otpError } = await supabase.auth.signInWithOtp({
       email,
-      password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`
+        shouldCreateUser: true,
       }
     })
 
-    if (e) {
-      setError(e.message)
+    if (otpError) {
+      setError(otpError.message)
       setLoading(false)
       return
     }
 
-    // Profile create karo immediately (user already created)
-    if (data.user) {
-      await supabase.from('profiles').insert([{
-        id: data.user.id,
-        anon_id: anonId,
-      }])
-    }
-
     setLoading(false)
-    setStep('otp') // OTP screen pe jao
+    setStep('otp')
   }
 
   // ── STEP 2: Verify OTP ──
@@ -69,33 +60,40 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
 
-    const { error: e } = await supabase.auth.verifyOtp({
+    const { data, error: verifyError } = await supabase.auth.verifyOtp({
       email,
       token: otp,
-      type: 'signup',
+      type: 'email',
     })
 
-    if (e) {
+    if (verifyError) {
       setError('Invalid or expired code. Please try again.')
       setLoading(false)
       return
     }
 
+    if (data.user) {
+      await supabase.auth.updateUser({ password: password })
+      await supabase.from('profiles').upsert([{
+        id: data.user.id,
+        anon_id: anonId,
+      }])
+    }
+
     setLoading(false)
-    setStep('done') // Success screen
+    setStep('done')
   }
 
   // ── Resend OTP ──
   async function handleResend() {
     setError('')
-    const { error: e } = await supabase.auth.resend({
-      type: 'signup',
+    const { error: e } = await supabase.auth.signInWithOtp({
       email,
+      options: { shouldCreateUser: true }
     })
     if (e) {
       setError('Could not resend. Try again.')
     } else {
-      setError('') // clear
       alert('New code sent!')
     }
   }
